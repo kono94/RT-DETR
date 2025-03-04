@@ -9,14 +9,13 @@ import onnxruntime as ort
 from PIL import Image, ImageDraw
 
 
-def draw(images, labels, boxes, scores, thrh = 0.6):
+def draw(images, labels, boxes, scores, thrh = 0.4):
     for i, im in enumerate(images):
         draw = ImageDraw.Draw(im)
 
         scr = scores[i]
         lab = labels[i][scr > thrh]
         box = boxes[i][scr > thrh]
-
         for b in box:
             draw.rectangle(list(b), outline='red',)
             draw.text((b[0], b[1]), text=str(lab[i].item()), fill='blue', )

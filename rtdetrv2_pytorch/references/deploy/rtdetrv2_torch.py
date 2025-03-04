@@ -66,8 +66,16 @@ def main(args, ):
         T.ToTensor(),
     ])
     im_data = transforms(im_pil)[None].to(args.device)
-
+    import time
     output = model(im_data, orig_size)
+    output = model(im_data, orig_size)
+    output = model(im_data, orig_size)
+    
+    start_time = time.perf_counter()  # High-resolution timer
+    output = model(im_data, orig_size)
+    end_time = time.perf_counter()
+    elapsed_time = (end_time - start_time) * 1000
+    print(f"Model forward pass took {elapsed_time:.2f} ms")
     labels, boxes, scores = output
 
     draw([im_pil], labels, boxes, scores)
