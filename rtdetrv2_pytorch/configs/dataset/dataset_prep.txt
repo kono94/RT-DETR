@@ -1,0 +1,4 @@
+Download FASSDD_CV and extract it to dataset/ - thats all
+
+Download SCUT_HEAD dataset, combine PartA and PartB, check the the validation with the valid_label.py for invalid annotations and files
+
