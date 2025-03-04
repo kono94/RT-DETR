@@ -1,0 +1,44 @@
+# Include base configurations from the RT-DETRv2 repository
+__include__: [
+  '../dataset/fire_detection.yml',  # Base COCO dataset settings (adjusted below)
+  '../runtime.yml',                 # Runtime settings
+  './include/rtdetrv2_r18vd_120e_coco.yml'
+]
+
+output_dir: ./output/fire_18v
+
+
+epoches: 64
+clip_max_norm: 0.1
+
+use_amp: True
+use_ema: True 
+ema:
+  type: ModelEMA
+  decay: 0.9999
+  warmups: 2000
+
+optimizer:
+  type: AdamW
+  params: 
+    - 
+      params: '^(?=.*backbone)(?!.*norm).*$'
+      lr: 0.00001 # Lower LR for backbone
+    - 
+      params: '^(?=.*(?:encoder|decoder))(?=.*(?:norm|bn)).*$'
+      weight_decay: 0. # No weight decay for normalization layers
+
+  lr: 0.0001  # Default learning rate
+  betas: [0.9, 0.999]
+  weight_decay: 0.0001
+
+
+lr_scheduler:
+  type: MultiStepLR
+  milestones: [1000]
+  gamma: 0.1
+
+
+lr_warmup_scheduler:
+  type: LinearWarmup
+  warmup_duration: 2000
