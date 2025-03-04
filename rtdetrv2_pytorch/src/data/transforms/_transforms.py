@@ -1,5 +1,8 @@
 """"Copyright(c) 2023 lyuwenyu. All Rights Reserved.
 """
+import PIL
+import PIL.Image
+PIL.Image.MAX_IMAGE_PIXELS = None
 
 import torch 
 import torch.nn as nn 
@@ -10,8 +13,7 @@ torchvision.disable_beta_transforms_warning()
 import torchvision.transforms.v2 as T
 import torchvision.transforms.v2.functional as F
 
-import PIL
-import PIL.Image
+
 
 from typing import Any, Dict, List, Optional
 
@@ -20,6 +22,7 @@ from .._misc import Image, Video, Mask, BoundingBoxes
 from .._misc import SanitizeBoundingBoxes
 
 from ...core import register
+
 
 
 RandomPhotometricDistort = register()(T.RandomPhotometricDistort)
@@ -100,7 +103,7 @@ class ConvertBoxes(T.Transform):
         self.fmt = fmt
         self.normalize = normalize
 
-    def _transform(self, inpt: Any, params: Dict[str, Any]) -> Any:  
+    def transform(self, inpt: Any, params: Dict[str, Any]) -> Any:  
         spatial_size = getattr(inpt, _boxes_keys[1])
         if self.fmt:
             in_fmt = inpt.format.value.lower()
@@ -123,7 +126,7 @@ class ConvertPILImage(T.Transform):
         self.dtype = dtype
         self.scale = scale
 
-    def _transform(self, inpt: Any, params: Dict[str, Any]) -> Any:  
+    def transform(self, inpt: Any, params: Dict[str, Any]) -> Any:  
         inpt = F.pil_to_tensor(inpt)
         if self.dtype == 'float32':
             inpt = inpt.float()
