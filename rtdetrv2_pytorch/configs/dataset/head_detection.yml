@@ -14,8 +14,8 @@ train_dataloader:
   type: DataLoader
   dataset:
     type: VOCDetection
-    root: ./dataset/SCUT_HEAD/
-    ann_file: ImageSets/Main/train.txt
+    root: ./dataset/COMBINED_HEAD/
+    ann_file: Splits/trainval.txt
     label_file: label_list.txt
     transforms:
       type: Compose
@@ -24,41 +24,43 @@ train_dataloader:
         - {type: RandomZoomOut, fill: 0}
         - {type: RandomIoUCrop, p: 0.8}
         - {type: SanitizeBoundingBoxes, min_size: 1}
-        - {type: RandomAffine, degrees: [-15, 15], translate: [0.1, 0.1], scale: [0.8, 1.2], shear: [-5, 5]}
+      #  - {type: RandomAffine, degrees: [-15, 15], translate: [0.1, 0.1], scale: [0.8, 1.2], shear: [-5, 5]}
         - {type: ColorJitter, brightness: 0.2, contrast: 0.2, saturation: 0.2, hue: 0.1}
         - {type: GaussianBlur, kernel_size: 3, sigma: [0.1, 0.5]}
         - {type: RandomHorizontalFlip}
-        - {type: Resize, size: [800, 800], }
+        - {type: Resize, size: [664, 664], }
         - {type: SanitizeBoundingBoxes, min_size: 1}
         - {type: ConvertPILImage, dtype: 'float32', scale: True}   
         - {type: ConvertBoxes, fmt: 'cxcywh', normalize: True}
       policy:
         name: stop_epoch
-        epoch: 63 # epoch in [71, ~) stop `ops`
+        epoch: 62 # epoch in [62, ~) stop `ops`
         ops: ['RandomPhotometricDistort', 'RandomZoomOut', 'RandomIoUCrop']
   shuffle: True
-  batch_size: 32
-  num_workers: 4
+  batch_size: 24
+  num_workers: 8
   drop_last: True
   collate_fn:
     type: BatchImageCollateFuncion
+    scales: [480, 512, 544, 576, 608, 640, 640, 640, 672, 704, 736, 768, 800]
+    stop_epoch: 62 # epoch in [62, ~) stop `multiscales`
 
 # Validation dataloader
 val_dataloader:
   type: DataLoader
   dataset:
     type: VOCDetection
-    root: ./dataset/SCUT_HEAD/
-    ann_file: ImageSets/Main/test.txt
+    root: ./dataset/COMBINED_HEAD/
+    ann_file: Splits/test.txt
     label_file: label_list.txt
     transforms:
       type: Compose
       ops: 
-        - {type: Resize, size: [800, 800]}
+        - {type: Resize, size: [664, 664]}
         - {type: ConvertPILImage, dtype: 'float32', scale: True}   
   shuffle: False
-  batch_size: 32
-  num_workers: 4
+  batch_size: 24
+  num_workers: 8
   drop_last: False
   collate_fn:
     type: BatchImageCollateFuncion

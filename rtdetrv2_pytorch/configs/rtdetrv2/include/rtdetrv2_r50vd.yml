@@ -6,7 +6,7 @@ postprocessor: RTDETRPostProcessor
 
 
 use_focal_loss: True
-eval_spatial_size: [800, 800] # h w
+eval_spatial_size: [664, 664] # h w
 
 
 RTDETR: 

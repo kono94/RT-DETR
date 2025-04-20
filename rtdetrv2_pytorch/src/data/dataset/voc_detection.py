@@ -56,8 +56,14 @@ class VOCDetection(torchvision.datasets.VOCDetection, DetDataset):
         except Image.DecompressionBombError as e:
             print(f"DecompressionBombError for {self.images[index]}: {e}")
             raise
-        target = self.parse_voc_xml(ET_parse(self.annotations[index]).getroot())
-        
+        # print(f"Loading annotation: {self.annotations[index]}")  # Debugging line
+        try:
+            target = self.parse_voc_xml(ET_parse(self.annotations[index]).getroot())
+        except Exception as e:
+            # Handle empty or invalid XML by assuming no objects
+            print(f"Warning: {self.annotations[index]} is empty or invalid, treating as no objects.")
+            target = {'annotation': {'object': []}}  # Empty annotation structure
+          
         output = {}
         output["image_id"] = torch.tensor([index])
         for k in ['area', 'boxes', 'labels', 'iscrowd']:
